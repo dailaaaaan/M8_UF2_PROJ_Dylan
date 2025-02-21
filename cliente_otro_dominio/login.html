@@ -1,0 +1,82 @@
+<!-- Nueva página de inicio de sesión: login.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Inicio de Sesión</h1>
+    <form id="login-form">
+        <input type="text" id="login-username" placeholder="Usuario" required>
+        <input type="password" id="login-password" placeholder="Contraseña" required>
+        <button type="button" id="loginButton">Iniciar Sesión</button>
+    </form>
+    <p>¿No tienes una cuenta? <a href="register.html">Regístrate aquí</a></p>
+
+    <script>
+        document.querySelector("#loginButton").addEventListener("click", async function() {
+            let username = document.querySelector("#login-username").value;
+            let password = document.querySelector("#login-password").value;
+            
+            let response = await fetch("http://localhost:5000/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+            
+            let data = await response.json();
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+                window.location.href = "index.html"; // Redirige al usuario a la página principal
+            } else {
+                alert("Error: " + data.error);
+            }
+        });
+    </script>
+</body>
+</html>
+
+<!-- Página de registro de usuario: register.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Registro de Usuario</h1>
+    <form id="register-form">
+        <input type="text" id="register-username" placeholder="Usuario" required>
+        <input type="password" id="register-password" placeholder="Contraseña" required>
+        <button type="button" id="registerButton">Registrarse</button>
+    </form>
+    <p>¿Ya tienes una cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+
+    <script>
+        document.querySelector("#registerButton").addEventListener("click", async function() {
+            let username = document.querySelector("#register-username").value;
+            let password = document.querySelector("#register-password").value;
+            
+            let response = await fetch("http://localhost:5000/api/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+            
+            let data = await response.json();
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+                alert("Registro exitoso, ahora puedes iniciar sesión");
+                window.location.href = "login.html";
+            } else {
+                alert("Error: " + data.error);
+            }
+        });
+    </script>
+</body>
+</html>
